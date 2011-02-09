@@ -1,0 +1,5 @@
+In this directory you will find the certificates that should be installed
+in /etc/sigsh.pem in order to allow sigsh(1) to execute commands signed by
+them.
+
+If you would like to generate a new cert, just run (BSD) 'make'.

@@ -1,0 +1,12 @@
+sigsh is a non-interactive, signature requiring and verifying command
+interpreter. More accurately, it is a signature verification wrapper
+around a given shell. It reads input in PKCS#7 format from standard in,
+verifies the signature and, if the signature matches, pipes the decoded
+input into the command interpreter.
+
+Related:
+	NetBSD's Veriexec
+	MS Powershell ExecutionPolicy
+	OpenBSD's "Stephanie" / TPE
+		http://packetfactory.openwall.net/projects/stephanie/index.html
+	Linux Trusted Path Execution

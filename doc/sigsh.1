@@ -1,0 +1,121 @@
+.\"	Copyright (c) 2010,2011 Yahoo! Inc.
+.\"
+.\"	This manual page was originally written by Jan Schaumann
+.\"	<jschauma@yahoo-inc.com> in September 2010.
+.Dd February 09, 2011
+.Dt SIGSH 1
+.Os
+.Sh NAME
+.Nm sigsh
+.Nd a signature verifying shell
+.Sh SYNOPSIS
+.Nm
+.Op Fl c Ar certs
+.Op Fl x
+.Op Fl p Ar prog
+.Sh DESCRIPTION
+.Nm
+is a non-interactive, signature requiring and verifying command
+interpreter.
+More accurately, it is a signature verification wrapper around a given
+shell.
+It reads input in PKCS#7 format from standard in, verifies the signature
+and, if the signature matches, pipes the decoded input into the command
+interpreter.
+.Sh OPTIONS
+.Nm
+supports the following flags:
+.Bl -tag -width s_shell_
+.It Fl c Ar certs
+Read ceritificates to trust from this file.
+.It Fl p Ar prog
+Pipe commands into this interpreter instead of the default
+.Xr bash 1 .
+.It Fl x
+Enable debugging (mnemomic 'xtrace', as
+.Xr sh 1 Ns ).
+.El
+.Sh DETAILS
+Conceptually similar to Microsoft Windows' Powershell ExecutionPolicy (as
+set to 'allSigned'),
+.Nm
+will only execute any commands from the input if a valid signature is
+found.
+This allows, for example, a headless user to be able to run any arbitrary
+set of commands (if provided by trusted entities) without having to give
+it a fully interactive login shell.
+By specifying a different interpreter to which to pass the verified input,
+.Nm
+can be used for almost anything requiring input verification so long as
+the tool invoked accepts input from standard in.
+.Pp
+.Nm
+is intentionally kept as simple as possible and does not provide for a
+whole lot of customization via either a startup file or any command-line
+options.
+.Sh INPUT
+.Nm
+reads input from standard in.
+That is, unlike other interactive command interpreters, it cannot be
+invoked from the terminal to read commands one at a time.
+.Nm
+relies on (and shells out to)
+.Xr openssl 1
+for signature verification.
+In particular, it expects input to be in PKCS#7 format, containing signed
+data to be passed to the command interpreter.
+In order to verify the signature,
+.Nm
+needs to have available a matching certificate (see section FILES).
+.Sh OUTPUT
+By default,
+.Nm
+does not generate any output itself.
+If input verification fails, it will return an error code (see section
+EXIT STATUS) and print a brief message to STDERR; otherwise, it will pipe
+the validated input to the given command interpreter, letting it generate
+any and all output (both to standard out and standard error).
+.Sh EXAMPLES
+The following examples illustrate possible usage of this tool.
+.Pp
+To execute the commands in the file 'script.bash':
+.Bd -literal -offset indent
+openssl smime -sign -nodetach -signer mycert.pem -inkey mykey.pem \\
+    -in script.bash -outform pem | sigsh
+.Ed
+.Pp
+To execute the perl code contained in the signed PKCS#7 file 'code.pem':
+.Bd -literal -offset indent
+sigsh -p /usr/bin/perl < code.pem
+.Ed
+.Sh EXIT STATUS
+.Nm
+will exit with the rather unusual return code of 127 if verification of
+the input fails (for whatever reason).
+Otherwise, it will return the exit code of the interpreter invoked.
+.Sh ENVIRONMENT
+.Nm
+clears the environment before passing the verified input on to the
+interpreter.
+Therefor, the input must make sure to explicitly set any variables it may
+rely on.
+.Sh FILES
+.Nm
+uses the following files:
+.Bl -tag -width _etc_sigsh_pem_
+.It /etc/sigsh.pem
+The file containing all certificates that
+.Nm
+will verify the input against.
+.El
+.Sh SEE ALSO
+.Xr openssl 1 ,
+.Xr smime 1
+.Sh HISTORY
+.Nm
+was originally written by
+.An Jan Schaumann
+.Aq jschauma@yahoo-inc.com
+in September 2010.
+.Sh BUGS
+Please report bugs and feature requests to the author.
