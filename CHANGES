@@ -1,0 +1,3 @@
+2011-08-07:
+ * significantly increase performance by only handling input line-by-line
+   if we are in trace mode

@@ -170,7 +170,13 @@ fi
 
 IFS='
 '
-for line in ${output}; do
-	xtrace "${line}"
-	echo "${line}" | tr -d '\r'
-done | ${PROGRAM}
+# We only loop through this line by line if we're tracing.  Otherwise,
+# this would be a significant performance penalty for large input scripts.
+if [ ${XTRACE} -gt 0 ]; then
+	for line in ${output}; do
+		xtrace "${line}"
+		echo "${line}" | tr -d '\r'
+	done | ${PROGRAM}
+else
+	echo "${output}" | tr -d '\r' | ${PROGRAM}
+fi
