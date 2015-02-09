@@ -17,7 +17,7 @@ chomp($uname);
 my $perl = `which perl`;
 chomp($perl);
 
-my $sigsh = "sh ../src/sigsh.sh -c ./mycert.pem";
+my $sigsh = "sh ../src/sigsh.sh -f ./mycert.pem";
 my $cmd = "echo uname | $signed_input | $sigsh";
 my $test = Test::Command->new( cmd => $cmd);
 $test->stdout_like(qr/^$uname$/, "uname was invoked after verification");
