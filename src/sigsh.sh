@@ -63,14 +63,13 @@ XTRACE=0
 ###
 
 # function : error
-# purpose  : print given message to STDERR and exit unsuccessfully
+# purpose  : print given message to STDERR
 # inputs   : msg
 
 error() {
 	local msg="$@"
 
 	echo "${PROGNAME}: $msg" >&2
-	exit 1
 }
 
 # function : usage
@@ -78,8 +77,8 @@ error() {
 
 usage() {
 	cat <<EOH
-Usage: ${PROGNAME} [-x] [-c certs] [-p program]
-         -c certs    Read certs to trust from this file.
+Usage: ${PROGNAME} [-x] [-f certs] [-p program]
+         -f certs    Read certs to trust from this file.
          -p program  Pipe commands into 'program'.
          -x          Enabled debugging.
 EOH
@@ -89,17 +88,19 @@ EOH
 # purpose  : ensure given arg is sane for shell evaluation by matching it
 #            against a simple restrictive RE
 # inputs   : a string
-# returns  : the given string if it matches, errors out otherwise
+# prints   : the given string if it matches
+# returns  : 0 on success, 1 on invalid input
 
 verifyArg() {
 	local arg="${1}"
 
 	if expr "${arg}" : "[a-zA-Z0-9/_.-]*$" >/dev/null 2>&1 ; then
 		echo "${arg}"
-	else
-		error "Argument must match ^[a-zA-Z0-9/_.-]*$."
-		# NOTREACHED
+		return 0
 	fi
+
+	error "Argument must match ^[a-zA-Z0-9/_.-]*$."
+	return 1
 }
 
 # function : xtrace
@@ -118,13 +119,15 @@ xtrace() {
 ### Main
 ###
 
-while getopts 'c:p:x' opt; do
+while getopts 'f:p:x' opt; do
 	case ${opt} in
-		c)
-			CERTS=$(verifyArg ${OPTARG})
+		f)
+			CERTS=$(verifyArg "${OPTARG}")
+			[ $? -ne 0 ] && exit 1
 		;;
 		p)
-			PROGRAM=$(verifyArg ${OPTARG})
+			PROGRAM=$(verifyArg "${OPTARG}")
+			[ $? -ne 0 ] && exit 1
 		;;
 		x)
 			XTRACE=1
