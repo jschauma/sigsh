@@ -122,11 +122,11 @@ xtrace() {
 while getopts 'f:p:x' opt; do
 	case ${opt} in
 		f)
-			CERTS=$(verifyArg ${OPTARG})
+			CERTS=$(verifyArg "${OPTARG}")
 			[ $? -ne 0 ] && exit 1
 		;;
 		p)
-			PROGRAM=$(verifyArg ${OPTARG})
+			PROGRAM=$(verifyArg "${OPTARG}")
 			[ $? -ne 0 ] && exit 1
 		;;
 		x)
