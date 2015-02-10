@@ -6,7 +6,7 @@ use strict;
 use warnings;
 
 use Test::Command;
-use Test::More tests => 10;
+use Test::More tests => 11;
 
 system("openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mykey.pem -out mycert.pem -batch >/dev/null 2>&1");
 
@@ -17,9 +17,14 @@ chomp($uname);
 my $perl = `which perl`;
 chomp($perl);
 
-my $sigsh = "sh ../src/sigsh.sh -c ./mycert.pem";
+my $sigsh= "sh ../src/sigsh.sh -f \"foo(); && >/etc/passwd\"";
+my $test = Test::Command->new( cmd => $sigsh);
+$test->stderr_like(qr/: Argument must match /, "invalid input leads to failure");
+
+$sigsh = "sh ../src/sigsh.sh -f ./mycert.pem";
+
 my $cmd = "echo uname | $signed_input | $sigsh";
-my $test = Test::Command->new( cmd => $cmd);
+$test = Test::Command->new( cmd => $cmd);
 $test->stdout_like(qr/^$uname$/, "uname was invoked after verification");
 
 $cmd = "echo uname | $signed_input | $sigsh -x";

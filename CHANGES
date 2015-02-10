@@ -1,3 +1,11 @@
+2015-02-10:
+ * merge changes from Y!:
+   * change '-c' to '-f', since login shells might get invoked with '-c',
+     which opens up the possibility of allowing a user to provide their
+     own certificate via 'ssh host -- /dev/tty'
+   * correct error reporting, since verifyArgs() is executed in a subshell
+   * quote args to verifyArgs
+
 2011-08-07:
  * significantly increase performance by only handling input line-by-line
    if we are in trace mode

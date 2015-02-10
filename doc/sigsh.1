@@ -2,7 +2,7 @@
 .\"
 .\"	This manual page was originally written by Jan Schaumann
 .\"	<jschauma@yahoo-inc.com> in September 2010.
-.Dd February 09, 2011
+.Dd February 10, 2015
 .Dt SIGSH 1
 .Os
 .Sh NAME
@@ -10,7 +10,7 @@
 .Nd a signature verifying shell
 .Sh SYNOPSIS
 .Nm
-.Op Fl c Ar certs
+.Op Fl f Ar certs
 .Op Fl x
 .Op Fl p Ar prog
 .Sh DESCRIPTION
@@ -26,7 +26,7 @@ interpreter.
 .Nm
 supports the following flags:
 .Bl -tag -width s_shell_
-.It Fl c Ar certs
+.It Fl f Ar certs
 Read ceritificates to trust from this file.
 .It Fl p Ar prog
 Pipe commands into this interpreter instead of the default
