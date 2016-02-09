@@ -5,7 +5,8 @@ CERT?=mycert.pem
 DATE!=date +%Y-%m-%d
 SDATE!=date +%s
 EXPSECONDS!=echo '( ${EXPIRE} * 24 * 60 * 60 ) + ${SDATE}' | bc
-EXPDATE!=date -j -f %s ${EXPSECONDS}
+OSNAME!=uname
+EXPDATE!=[ "${OSNAME}" = "Linux" ] && date -d "@${EXPSECONDS}" || date -j -f %s ${EXPSECONDS}
 
 all: newcert
 

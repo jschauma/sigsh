@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# Copyright (c) 2010,2011 Yahoo! Inc.
+# Copyright (c) 2010,2011,2016 Yahoo! Inc.
 # All rights reserved.
 #
 # Originally written by Jan Schaumann <jschauma@yahoo-inc.com> in October
@@ -56,6 +56,7 @@ CERTS="/etc/sigsh.pem"
 PROGRAM="bash"
 SSL_VERIFY="openssl smime -verify -inform pem -CAfile"
 PROGNAME="${0##*/}"
+VERSION="0.7.1"
 XTRACE=0
 
 ###
@@ -77,7 +78,9 @@ error() {
 
 usage() {
 	cat <<EOH
-Usage: ${PROGNAME} [-x] [-f certs] [-p program]
+Usage: ${PROGNAME} [-Vdx] [-f certs] [-p program]
+         -V          Print version info and exit.
+         -d          Don't execute commands.
          -f certs    Read certs to trust from this file.
          -p program  Pipe commands into 'program'.
          -x          Enabled debugging.
@@ -119,15 +122,23 @@ xtrace() {
 ### Main
 ###
 
-while getopts 'f:p:x' opt; do
+while getopts 'Vdf:p:x' opt; do
 	case ${opt} in
+		V)
+			echo "${VERSION}"
+			exit 0
+			# NOTREACHED
+		;;
+		d)
+			PROGRAM="cat"
+		;;
 		f)
 			CERTS=$(verifyArg "${OPTARG}")
 			[ $? -gt 0 ] && exit 1
 		;;
 		p)
 			PROGRAM=$(verifyArg "${OPTARG}")
-			[ $? -gt 0 ] && exit 1
+			[ $? -ne 0 ] && exit 1
 		;;
 		x)
 			XTRACE=1

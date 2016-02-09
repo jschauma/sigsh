@@ -1,8 +1,8 @@
-.\"	Copyright (c) 2010,2011 Yahoo! Inc.
+.\"	Copyright (c) 2010-2016 Yahoo! Inc.
 .\"
 .\"	This manual page was originally written by Jan Schaumann
 .\"	<jschauma@yahoo-inc.com> in September 2010.
-.Dd February 10, 2015
+.Dd February 08, 2016
 .Dt SIGSH 1
 .Os
 .Sh NAME
@@ -10,8 +10,8 @@
 .Nd a signature verifying shell
 .Sh SYNOPSIS
 .Nm
+.Op Fl Vdx
 .Op Fl f Ar certs
-.Op Fl x
 .Op Fl p Ar prog
 .Sh DESCRIPTION
 .Nm
@@ -26,6 +26,10 @@ interpreter.
 .Nm
 supports the following flags:
 .Bl -tag -width s_shell_
+.It Fl V
+Report version information and exit.
+.It Fl d
+Don't execute the commands, just show them.
 .It Fl f Ar certs
 Read ceritificates to trust from this file.
 .It Fl p Ar prog
@@ -86,7 +90,7 @@ openssl smime -sign -nodetach -signer mycert.pem -inkey mykey.pem \\
 .Pp
 To execute the perl code contained in the signed PKCS#7 file 'code.pem':
 .Bd -literal -offset indent
-sigsh -p /usr/bin/perl < code.pem
+sigsh -p /usr/bin/perl <code.pem
 .Ed
 .Sh EXIT STATUS
 .Nm
